@@ -312,7 +312,7 @@ public class ClientReg extends javax.swing.JFrame {
         java.util.Arrays.fill(passwordArray, '0');
 
         // Check if the username already exists in the database
-        pat = con.prepareStatement("SELECT COUNT(*) FROM client WHERE Username = ?");
+        pat = con.prepareStatement("SELECT COUNT(*) FROM clients WHERE Username = ?");
         pat.setString(1, us);
         ResultSet rs = pat.executeQuery();
 
@@ -331,7 +331,7 @@ public class ClientReg extends javax.swing.JFrame {
         }
 
         // Corrected SQL query (no need for UserID as it is auto-incremented)
-        pat = con.prepareStatement("INSERT INTO client (Username, Firstname, Lastname, ContactNo, Password, Gender) VALUES (?, ?, ?, ?, ?, ?)");
+        pat = con.prepareStatement("INSERT INTO clients (Username, Firstname, Lastname, ContactNo, Password, Gender) VALUES (?, ?, ?, ?, ?, ?)");
         pat.setString(1, us);
         pat.setString(2, fn);
         pat.setString(3, ln);
