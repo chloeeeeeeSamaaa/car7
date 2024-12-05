@@ -29,7 +29,7 @@ public class Reserve extends javax.swing.JFrame {
     public Reserve() {
         initComponents();
         Connect();
-        autoID();
+      
         carNo();
          carBrand();
          carModel() ;
@@ -49,39 +49,30 @@ Connection con;
         }
     }
 
-public void autoID() {
+
+
+public String generateRentID() {
+    String rentID = "R";
+    int lastRentID = 0;  // Initialize lastRentID
+    
     try {
-        // Query to get the maximum RentID for the current user
-        String query = "SELECT MAX(RentID) FROM reservations WHERE UserID = ?";
-        pat = con.prepareStatement(query);
-        pat.setInt(1, Client.UID); // Use the logged-in user's ID
+        // Query to get the number of reservations made by the current user
+        pat = con.prepareStatement("SELECT COUNT(*) FROM reservations WHERE UserID = ?");
+        pat.setInt(1, Client.UID);  // Use the current user's ID
         ResultSet rs = pat.executeQuery();
-
+        
         if (rs.next()) {
-            String maxID = rs.getString(1);
-
-            if (maxID == null) {
-                // No reservations exist for this user, start with "R001"
-                jLabel9.setText("R001");
-            } else {
-                // Extract numeric part from RentID (e.g., "001" from "R001")
-                String numericPart = maxID.substring(1); // Skip the "R"
-                long id = Long.parseLong(numericPart);   // Convert to number
-                id++;                                   // Increment the number
-
-                // Generate the new RentID with leading zeroes
-                String newID = "R" + String.format("%03d", id);
-                jLabel9.setText(newID);                // Set the new RentID
-            }
-        } else {
-            // Default RentID for a new user with no reservations
-            jLabel9.setText("R001");
+            // If user has no previous reservations, start from R001
+            lastRentID = rs.getInt(1);  // Get the count of reservations for the user
         }
     } catch (SQLException ex) {
-        Logger.getLogger(Reserve.class.getName()).log(Level.SEVERE, "Error generating RentID", ex);
-        JOptionPane.showMessageDialog(this, "Error generating RentID: " + ex.getMessage(),
-                "Database Error", JOptionPane.ERROR_MESSAGE);
+        Logger.getLogger(Reserve.class.getName()).log(Level.SEVERE, null, ex);
     }
+    
+    // If no reservations, this is the user's first reservation (R001)
+    lastRentID++;  // Increment to start from 1 for the first reservation
+    
+    return "R" + String.format("%03d", lastRentID);  // Return RentID with leading zeros, e.g., R001, R002, etc.
 }
 
 
@@ -181,7 +172,6 @@ public void autoID() {
         jLabel8 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         carno = new javax.swing.JComboBox<>();
         jLabel11 = new javax.swing.JLabel();
@@ -253,9 +243,6 @@ public void autoID() {
             }
         });
 
-        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel9.setText("jLabel9");
-
         jLabel10.setForeground(new java.awt.Color(255, 255, 255));
         jLabel10.setText("RENTID");
 
@@ -319,21 +306,14 @@ public void autoID() {
                     .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jButton1)
-                        .addGap(30, 30, 30))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(126, 126, 126))))
+                .addComponent(jButton1)
+                .addGap(30, 30, 30))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(25, 25, 25)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
-                    .addComponent(jLabel10))
+                .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -354,7 +334,7 @@ public void autoID() {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtcarmodel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(carno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel11))
@@ -407,7 +387,7 @@ public void autoID() {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 291, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -439,10 +419,10 @@ public void autoID() {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 746, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 755, Short.MAX_VALUE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel1)
                                 .addGap(9, 9, 9)))
                         .addContainerGap())
@@ -455,7 +435,7 @@ public void autoID() {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(28, Short.MAX_VALUE)
+                .addContainerGap(20, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -477,7 +457,9 @@ public void autoID() {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -496,9 +478,8 @@ public void autoID() {
     }//GEN-LAST:event_txtmobileActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-       // TODO add your handling code here:
-    // TODO add your handling code here:
-    String rentID = jLabel9.getText();  // RentID from JLabel
+    String rentID = generateRentID();  // Generate RentID based on logic
+
     String name = txtname.getText().trim();
     String address = txtaddress.getText().trim();
     String mobile = txtmobile.getText().trim();
@@ -509,7 +490,7 @@ public void autoID() {
     // Validate inputs
     if (txtcheckin.getDate() == null || txtcheckout.getDate() == null || 
         name.isEmpty() || address.isEmpty() || mobile.isEmpty() ||
-        carNo.isEmpty()) {  // Check if carNo is selected
+        carNo.isEmpty()) {
         JOptionPane.showMessageDialog(this, "Please fill in all fields", "Missing Information", JOptionPane.WARNING_MESSAGE);
         return;
     }
@@ -542,10 +523,8 @@ public void autoID() {
         pat.setString(1, carNo);
         ResultSet rs = pat.executeQuery();
 
-        // Debugging log to check the value fetched
         if (rs.next()) {
             carAmountPerDay = rs.getDouble("amount");
-            System.out.println("Fetched car rental rate per day: " + carAmountPerDay);  // Debugging log
         } else {
             JOptionPane.showMessageDialog(this, "Car rental rate not found", "Error", JOptionPane.ERROR_MESSAGE);
             return;
@@ -560,9 +539,6 @@ public void autoID() {
         // Calculate the total rental amount
         double totalAmount = numberOfNights * carAmountPerDay;
 
-        // Debugging log to check the total amount
-        System.out.println("Total amount for reservation: " + totalAmount);  // Debugging log
-
         // Check if the car is already reserved for the selected dates
         pat = con.prepareStatement(
             "SELECT * FROM reservations WHERE carNo = ? AND ( " +
@@ -572,12 +548,12 @@ public void autoID() {
             ")");
 
         pat.setString(1, carNo);
-        pat.setString(2, rentdate);  // Rentdate for the new reservation
-        pat.setString(3, returndate);  // Returndate for the new reservation
-        pat.setString(4, rentdate);  // Rentdate for the new reservation
-        pat.setString(5, returndate);  // Returndate for the new reservation
-        pat.setString(6, rentdate);  // Rentdate for the new reservation
-        pat.setString(7, returndate);  // Returndate for the new reservation
+        pat.setString(2, rentdate);
+        pat.setString(3, returndate);
+        pat.setString(4, rentdate);
+        pat.setString(5, returndate);
+        pat.setString(6, rentdate);
+        pat.setString(7, returndate);
 
         rs = pat.executeQuery();
         if (rs.next()) {
@@ -585,17 +561,14 @@ public void autoID() {
             return;
         }
 
-        // Generate RentID based on the current user's reservations
-     
-
-        // Proceed to insert the reservation if no conflicts are found
+        // Insert the reservation into the database
         pat = con.prepareStatement(
             "INSERT INTO reservations (RentID, UserID, Name, Address, ContactNo, Carbrand, Carmodel, Rentdate, Returndate, Amount, Status, carNo) " + 
             "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)"
         );
 
         // Set parameters for the query
-        pat.setString(1, rentID);  // Insert the generated RentID
+        pat.setString(1, rentID);  // Use the generated RentID
         pat.setInt(2, Client.UID);  // Use the logged-in user's ID
         pat.setString(3, name);
         pat.setString(4, address);
@@ -605,13 +578,15 @@ public void autoID() {
         pat.setString(8, rentdate);
         pat.setString(9, returndate);
         pat.setDouble(10, totalAmount);
-        pat.setString(11, "Pending");  // Set the status to 'Pending'
-        pat.setString(12, carNo);  // Ensure that carNo is set in the query
+        pat.setString(11, "Pending");
+        pat.setString(12, carNo);
 
-        pat.executeUpdate();  // Insert the reservation
-        autoID();
-        Load_reservation();  // Reload reservations if needed
+        pat.executeUpdate();  // Execute the insert
+
         JOptionPane.showMessageDialog(this, "Car reservation added successfully.");
+
+        // Refresh the reservation list
+        Load_reservation();
 
         // Clear the fields after successful insertion
         txtname.setText("");
@@ -633,14 +608,20 @@ public void autoID() {
         // TODO add your handling code here:
     }//GEN-LAST:event_carnoActionPerformed
  private int previouslySelectedRow = -1;
+ private String selectedRentID = "";
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
         // TODO add your handling code here:
-        int selectedRow = jTable1.getSelectedRow();
-
+  int selectedRow = jTable1.getSelectedRow();
+if (selectedRow >= 0) {
+        selectedRentID = jTable1.getValueAt(selectedRow, 0) != null ? jTable1.getValueAt(selectedRow, 0).toString() : "";
+        // Enable the Edit button if a valid row is selected
+        jButton2.setEnabled(true);
+    } else {
+        jButton2.setEnabled(false);  // Disable the Edit button if no row is selected
+    }
     // Check if the same row is clicked again
     if (selectedRow == previouslySelectedRow) {
         // Clear all fields if the same row is clicked again
-        jLabel9.setText("");  // RentID label
         txtname.setText("");  // Name text field
         txtaddress.setText("");  // Address text field
         txtmobile.setText("");  // Mobile text field
@@ -664,8 +645,8 @@ public void autoID() {
 
         if (selectedRow >= 0) { // Ensure a valid row is selected
             try {
-                // Set RentID (column 0)
-                jLabel9.setText(jTable1.getValueAt(selectedRow, 0) != null ? jTable1.getValueAt(selectedRow, 0).toString() : "");
+                // Get the RentID (column 0)
+                String rentID = jTable1.getValueAt(selectedRow, 0) != null ? jTable1.getValueAt(selectedRow, 0).toString() : "";
 
                 // Set Name (column 1)
                 txtname.setText(jTable1.getValueAt(selectedRow, 1) != null ? jTable1.getValueAt(selectedRow, 1).toString() : "");
@@ -696,11 +677,11 @@ public void autoID() {
                     txtcheckout.setDate(null);
                 }
 
-               
-               
-
                 // Disable the Add button to avoid accidental additions
                 jButton1.setEnabled(false);
+
+                // Store RentID for further actions
+               // Store RentID to use in update and delete actions
 
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Error loading reservation details: " + ex.getMessage());
@@ -711,11 +692,19 @@ public void autoID() {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-         String rentID = jLabel9.getText();
+     int selectedRow = jTable1.getSelectedRow();
+    if (selectedRow == -1) {
+        // No row selected, show an error message
+        JOptionPane.showMessageDialog(this, "No reservation selected.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    
+    // Retrieve RentID from the selected row (assuming it's in the first column)
+    String rentID = jTable1.getValueAt(selectedRow, 0).toString();
 
     // Validate the RentID
     if (rentID == null || rentID.trim().isEmpty()) {
-        JOptionPane.showMessageDialog(this, "No valid reservation selected.", "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, "No valid RentID found for this reservation.", "Error", JOptionPane.ERROR_MESSAGE);
         return;
     }
 
@@ -729,8 +718,8 @@ public void autoID() {
         try {
             // Prepare the DELETE SQL statement
             pat = con.prepareStatement("DELETE FROM reservations WHERE RentID = ? AND UserID = ?");
-            pat.setString(1, rentID);  // Use RentID as per the columns
-            pat.setInt(2, Client.UID);  // Use the logged-in user's ID to ensure they can only delete their own reservation
+            pat.setString(1, rentID);  // Use RentID to delete the reservation
+            pat.setInt(2, Client.UID);  // Ensure only the logged-in user can delete their reservation
 
             // Execute the DELETE operation
             int rowsAffected = pat.executeUpdate();
@@ -740,7 +729,6 @@ public void autoID() {
                 JOptionPane.showMessageDialog(this, "Reservation deleted successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
 
                 // Clear the form fields
-                jLabel9.setText("");
                 txtname.setText("");
                 txtaddress.setText("");
                 txtmobile.setText("");
@@ -751,8 +739,7 @@ public void autoID() {
                 carno.setSelectedIndex(-1);
 
                 // Refresh the data
-                autoID();  // Reset the auto-generated RentID
-                Load_reservation();  // Reload the reservations
+                Load_reservation();  // Reload the reservations to reflect changes
                 jButton1.setEnabled(true);  // Enable the reservation button again
             } else {
                 // Show error if no rows were affected
@@ -767,9 +754,10 @@ public void autoID() {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-      String rentID = jLabel9.getText();
+     // TODO add your handling code here:
+     String rentID = selectedRentID;
 
-    // Validate the RentID
+    // Validate RentID
     if (rentID == null || rentID.trim().isEmpty()) {
         JOptionPane.showMessageDialog(this, "No valid reservation selected.", "Error", JOptionPane.ERROR_MESSAGE);
         return;
@@ -840,18 +828,21 @@ public void autoID() {
         if (rowsAffected > 0) {
             // Show success message
             JOptionPane.showMessageDialog(this, "Reservation updated successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
-txtname.setText("");
-txtaddress.setText("");
-txtmobile.setText("");
-
-// Reset the combo boxes to default (no selection)
-txtcarbrand.setSelectedIndex(-1);
-txtcarmodel.setSelectedIndex(-1);
-carno.setSelectedIndex(-1);
-
-// Clear the date pickers (if applicable)
-txtcheckin.setDate(null);
-txtcheckout.setDate(null);
+            
+            // Clear the form fields
+            txtname.setText("");
+            txtaddress.setText("");
+            txtmobile.setText("");
+            
+            // Reset the combo boxes to default (no selection)
+            txtcarbrand.setSelectedIndex(-1);
+            txtcarmodel.setSelectedIndex(-1);
+            carno.setSelectedIndex(-1);
+            
+            // Clear the date pickers (if applicable)
+            txtcheckin.setDate(null);
+            txtcheckout.setDate(null);
+            
             // Refresh the data
             Load_reservation();  // Reload the reservations
         } else {
@@ -862,7 +853,6 @@ txtcheckout.setDate(null);
         Logger.getLogger(Reserve.class.getName()).log(Level.SEVERE, null, ex);
         JOptionPane.showMessageDialog(this, "Error updating reservation: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
-
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -923,7 +913,6 @@ txtcheckout.setDate(null);
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

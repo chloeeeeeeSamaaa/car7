@@ -266,7 +266,7 @@ public static int UID;
                     if (storedPassword.equals(password)) {
                         // Correct user credentials
                         UID = rs.getInt("UserID");
-                      Reserve clientDashboard = new Reserve();
+                      finalclient clientDashboard = new finalclient();
                         clientDashboard.setVisible(true);
                         dispose();
                     } else {

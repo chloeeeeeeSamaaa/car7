@@ -10,6 +10,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,7 +34,13 @@ public class finaladmin extends javax.swing.JFrame {
         Load_car();      
         Load_client();
         Load_reservations();
-        
+        updateReservationCount();
+        updateCarCount();
+        updateClientCount();
+           jPanel6.removeAll();
+      jPanel6.add(jPanel7);
+       jPanel6.repaint();
+        jPanel6.revalidate();
     }
 Connection con;
     PreparedStatement pat;
@@ -165,6 +173,105 @@ public void Load_reservations() {
         Logger.getLogger(finaladmin.class.getName()).log(Level.SEVERE, null, ex);
     }
 }
+public void updateReservationCount() {
+    try {
+        
+        // Step 1: Ensure 'con' is a valid and open connection
+        if (con == null || con.isClosed()) {
+            Logger.getLogger(finaladmin.class.getName()).log(Level.SEVERE, "Database connection is not valid!");
+            jLabel13.setText("Database connection error!");
+            return;
+        }
+
+        // Step 2: Execute SQL query
+        Statement s = con.createStatement();
+        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM reservations");
+
+        // Step 3: Process result
+        if (rs.next()) {
+            int count = rs.getInt(1); // Fetch the count of reservations
+            jLabel13.setText(" " + count); // Update JLabel
+            Logger.getLogger(finaladmin.class.getName()).log(Level.INFO, "Reservation count updated: " + count);
+        } else {
+            jLabel13.setText("Total Reservations: 0"); // Default text if no rows found
+            Logger.getLogger(finaladmin.class.getName()).log(Level.INFO, "No reservations found.");
+        }
+    } catch (SQLException ex) {
+        // Step 4: Log and display database error
+        Logger.getLogger(finaladmin.class.getName()).log(Level.SEVERE, "Database error: " + ex.getMessage(), ex);
+        jLabel13.setText("Error fetching data!");
+    } catch (Exception ex) {
+        // Step 5: Catch unexpected exceptions
+        Logger.getLogger(finaladmin.class.getName()).log(Level.SEVERE, "Unexpected error: " + ex.getMessage(), ex);
+        jLabel13.setText("Unexpected error occurred!");
+    }
+}
+public void updateCarCount() {
+    try {
+        
+        // Step 1: Ensure 'con' is a valid and open connection
+        if (con == null || con.isClosed()) {
+            Logger.getLogger(finaladmin.class.getName()).log(Level.SEVERE, "Database connection is not valid!");
+            jLabel14.setText("Database connection error!");
+            return;
+        }
+
+        // Step 2: Execute SQL query
+        Statement s = con.createStatement();
+        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM cars");
+
+        // Step 3: Process result
+        if (rs.next()) {
+            int count = rs.getInt(1); // Fetch the count of reservations
+            jLabel14.setText(" " + count); // Update JLabel
+            Logger.getLogger(finaladmin.class.getName()).log(Level.INFO, "Reservation count updated: " + count);
+        } else {
+            jLabel14.setText("Total Reservations: 0"); // Default text if no rows found
+            Logger.getLogger(finaladmin.class.getName()).log(Level.INFO, "No reservations found.");
+        }
+    } catch (SQLException ex) {
+        // Step 4: Log and display database error
+        Logger.getLogger(finaladmin.class.getName()).log(Level.SEVERE, "Database error: " + ex.getMessage(), ex);
+        jLabel14.setText("Error fetching data!");
+    } catch (Exception ex) {
+        // Step 5: Catch unexpected exceptions
+        Logger.getLogger(finaladmin.class.getName()).log(Level.SEVERE, "Unexpected error: " + ex.getMessage(), ex);
+        jLabel14.setText("Unexpected error occurred!");
+    }
+}
+public void updateClientCount() {
+    try {
+        
+        // Step 1: Ensure 'con' is a valid and open connection
+        if (con == null || con.isClosed()) {
+            Logger.getLogger(finaladmin.class.getName()).log(Level.SEVERE, "Database connection is not valid!");
+            jLabel15.setText("Database connection error!");
+            return;
+        }
+
+        // Step 2: Execute SQL query
+        Statement s = con.createStatement();
+        ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM clients");
+
+        // Step 3: Process result
+        if (rs.next()) {
+            int count = rs.getInt(1); // Fetch the count of reservations
+            jLabel15.setText(" " + count); // Update JLabel
+            Logger.getLogger(finaladmin.class.getName()).log(Level.INFO, "Reservation count updated: " + count);
+        } else {
+            jLabel15.setText("Total Reservations: 0"); // Default text if no rows found
+            Logger.getLogger(finaladmin.class.getName()).log(Level.INFO, "No reservations found.");
+        }
+    } catch (SQLException ex) {
+        // Step 4: Log and display database error
+        Logger.getLogger(finaladmin.class.getName()).log(Level.SEVERE, "Database error: " + ex.getMessage(), ex);
+        jLabel15.setText("Error fetching data!");
+    } catch (Exception ex) {
+        // Step 5: Catch unexpected exceptions
+        Logger.getLogger(finaladmin.class.getName()).log(Level.SEVERE, "Unexpected error: " + ex.getMessage(), ex);
+        jLabel15.setText("Unexpected error occurred!");
+    }
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -221,11 +328,15 @@ public void Load_reservations() {
         jButton6 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
         jPanel7 = new javax.swing.JPanel();
-        jLabel12 = new javax.swing.JLabel();
         jPanel9 = new javax.swing.JPanel();
+        jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
+        jButton8 = new javax.swing.JButton();
+        jLabel23 = new javax.swing.JLabel();
+        jLabel24 = new javax.swing.JLabel();
+        jLabel25 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -704,6 +815,11 @@ public void Load_reservations() {
                 return types [columnIndex];
             }
         });
+        jTable3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable3MouseClicked(evt);
+            }
+        });
         jScrollPane3.setViewportView(jTable3);
 
         jPanel3.add(jScrollPane3);
@@ -727,19 +843,27 @@ public void Load_reservations() {
 
         jButton6.setFont(new java.awt.Font("Segoe UI Black", 0, 14)); // NOI18N
         jButton6.setText("APROVE");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
         jPanel3.add(jButton6);
         jButton6.setBounds(20, 600, 120, 26);
 
         jButton7.setFont(new java.awt.Font("Segoe UI Black", 0, 14)); // NOI18N
         jButton7.setText("DELETE");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
         jPanel3.add(jButton7);
         jButton7.setBounds(910, 600, 82, 26);
 
         jPanel6.add(jPanel3, "card5");
 
         jPanel7.setBackground(new java.awt.Color(0, 102, 102));
-
-        jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/rentalcar/Orange Modern Hello Autumn Mobile Video (1).gif"))); // NOI18N
 
         jPanel9.setBackground(new java.awt.Color(0, 0, 0));
 
@@ -754,44 +878,96 @@ public void Load_reservations() {
             .addGap(0, 66, Short.MAX_VALUE)
         );
 
-        jLabel13.setText("jLabel13");
+        jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/rentalcar/Orange Modern Hello Autumn Mobile Video (1).gif"))); // NOI18N
 
-        jLabel14.setText("jLabel14");
+        jLabel13.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel13.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
+        jLabel13.setText("?");
 
-        jLabel15.setText("jLabel15");
+        jLabel14.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
+        jLabel14.setText("?");
+
+        jLabel15.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
+        jLabel15.setText("?");
+
+        jButton8.setText("logout");
+        jButton8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton8ActionPerformed(evt);
+            }
+        });
+
+        jLabel23.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
+        jLabel23.setText("Rents");
+
+        jLabel24.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
+        jLabel24.setText("Cars");
+
+        jLabel25.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
+        jLabel25.setText("Clients");
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton8)
+                .addGap(91, 91, 91))
             .addGroup(jPanel7Layout.createSequentialGroup()
-                .addGap(27, 27, 27)
-                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addGap(27, 27, 27)
+                        .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addGap(78, 78, 78)
+                        .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(206, 206, 206)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addComponent(jLabel13)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel23))
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel15, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel25, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel24, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
                 .addContainerGap(25, Short.MAX_VALUE))
-            .addGroup(jPanel7Layout.createSequentialGroup()
-                .addGap(78, 78, 78)
-                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
-                    .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(198, 198, 198))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 96, Short.MAX_VALUE)
+                .addGap(30, 30, 30)
+                .addComponent(jButton8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 456, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(41, 41, 41)
-                        .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(56, 56, 56)
-                        .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addGap(46, 46, 46)
+                                .addComponent(jLabel23)))
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addGap(34, 34, 34)
+                                .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addGap(80, 80, 80)
+                                .addComponent(jLabel24)))
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addGap(51, 51, 51)
+                                .addComponent(jLabel25)))))
                 .addGap(104, 104, 104))
         );
 
@@ -1081,6 +1257,157 @@ public void Load_reservations() {
 
     }//GEN-LAST:event_jButton5ActionPerformed
 
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        // TODO add your handling code here:
+           if (selectedRentID == null || selectedRentID.isEmpty()) {
+    JOptionPane.showMessageDialog(this, "Please select a reservation to delete.");
+    return;
+}
+
+// Confirm deletion
+int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this reservation?", "Confirm Deletion", JOptionPane.YES_NO_OPTION);
+if (confirm != JOptionPane.YES_OPTION) {
+    return; // User canceled
+}
+
+try {
+    // Retrieve userID from the selected row (adjust the column index if needed)
+    int selectedRow = jTable3.getSelectedRow();
+    String selectedUserID = jTable3.getValueAt(selectedRow, 1).toString(); // Assuming userID is in column 0
+
+    // Prepare the DELETE query with both ReserveID and userID
+    pat = con.prepareStatement("DELETE FROM reservations WHERE RentID = ? AND UserID = ?");
+    pat.setString(1, selectedRentID);
+    pat.setString(2, selectedUserID); // Bind the userID to the query
+
+    // Execute the delete query
+    int rowsAffected = pat.executeUpdate();
+
+    if (rowsAffected > 0) {
+        JOptionPane.showMessageDialog(this, "Rent deleted successfully.");
+        Load_reservations(); // Refresh the table
+       
+    } else {
+        JOptionPane.showMessageDialog(this, "Rent could not be deleted.");
+    }
+} catch (SQLException ex) {
+    JOptionPane.showMessageDialog(this, "Error deleting rent: " + ex.getMessage());
+}
+         
+    }//GEN-LAST:event_jButton7ActionPerformed
+private String selectedRentID;
+    private int previouslySelectedRow = -1;
+    private void jTable3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable3MouseClicked
+        // TODO add your handling code here:
+         int selectedRow = jTable3.getSelectedRow();
+
+    // Ensure a row is selected
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(this, "No row selected.");
+        return;
+    }
+
+    // Get the ReserveID from the selected row
+    String rentID = (String) jTable3.getValueAt(selectedRow, 0); // Assuming ReserveID is in column 1
+    if (rentID == null || rentID.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Selected row does not have a valid ReserveID.");
+        return;
+    }
+
+    // Store the selected ReserveID for further use
+    selectedRentID = rentID;
+
+    // Debugging: Print the selected reservation details for confirmation
+    System.out.println("Selected Rent ID: " + rentID);
+ 
+    }//GEN-LAST:event_jTable3MouseClicked
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        // TODO add your handling code here:
+         try {
+        // Get the selected row index
+        int selectedRow = jTable3.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a reservation to approve.", "No Selection", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Get the ReserveID, RoomNo, and Check-in/Check-out dates from the selected row
+        String selectedRentID = jTable3.getValueAt(selectedRow, 0).toString(); // Assuming ReserveID is in column 1
+        String selectedUserID = jTable3.getValueAt(selectedRow, 1).toString();
+     String name= jTable3.getValueAt(selectedRow, 2).toString();
+       String address= jTable3.getValueAt(selectedRow, 3).toString();
+         String contactno = jTable3.getValueAt(selectedRow, 4).toString();
+           String carbrand = jTable3.getValueAt(selectedRow, 5).toString();
+             String carmodel = jTable3.getValueAt(selectedRow, 6).toString();
+        String rentdate = jTable3.getValueAt(selectedRow, 7).toString(); // Assuming Check-In is in column 5
+        String returndate = jTable3.getValueAt(selectedRow, 8).toString(); // Assuming Check-Out is in column 6
+        String amount = jTable3.getValueAt(selectedRow, 9).toString(); // Assuming userID is in column 0
+        String currentStatus = jTable3.getValueAt(selectedRow, 10).toString(); // Assuming Status is in column 7
+    String carno = jTable3.getValueAt(selectedRow, 11).toString();
+        // Check if the reservation is already approved
+        if ("Approved".equals(currentStatus)) {
+            JOptionPane.showMessageDialog(this, "This reservation is already approved.", "Already Approved", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Convert dates to the proper format
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        java.util.Date checkInDate = sdf.parse(rentdate);
+        java.util.Date checkOutDate = sdf.parse(returndate);
+
+        // Prepare SQL query to check if the room is already booked for the selected dates (excluding the current reservation)
+        pat = con.prepareStatement(
+            "SELECT * FROM reservations WHERE carNo = ? AND Status = 'Pending' AND ( " +
+            "(rentdate BETWEEN ? AND ?) OR " + 
+            "(returndate BETWEEN ? AND ?) OR " + 
+            "(rentdate <= ? AND returndate >= ?) ) AND RentID != ?" // Exclude the current reservation (ReserveID != ?)
+        );
+
+        // Set parameters for roomNo and the date ranges
+        pat.setString(1, carno);
+        pat.setDate(2, new java.sql.Date(checkInDate.getTime()));
+        pat.setDate(3, new java.sql.Date(checkOutDate.getTime()));
+        pat.setDate(4, new java.sql.Date(checkInDate.getTime()));
+        pat.setDate(5, new java.sql.Date(checkOutDate.getTime()));
+        pat.setDate(6, new java.sql.Date(checkInDate.getTime()));
+        pat.setDate(7, new java.sql.Date(checkOutDate.getTime()));
+        pat.setString(8, selectedRentID); // Exclude the current reservation by ReserveID
+
+        ResultSet rs = pat.executeQuery();
+
+        // If a conflicting pending reservation exists, show an error message and return
+        if (rs.next()) {
+            JOptionPane.showMessageDialog(this, "Room is already booked for the selected dates.", "Room Conflict", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // If no conflict, update the reservation status
+        pat = con.prepareStatement("UPDATE reservations SET status = ? WHERE RentID = ? AND UserID = ?");
+        pat.setString(1, "Approved");  // Change Pending to "Approved"
+        pat.setString(2, selectedRentID);  // Set the selected ReserveID
+        pat.setString(3, selectedUserID);  // Set the selected userID
+        pat.executeUpdate();
+
+        // Show success message
+        JOptionPane.showMessageDialog(this, "Rent approved successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+
+        // Refresh the table or reload reservations
+        Load_reservations();
+
+    } catch (SQLException | ParseException ex) {
+        Logger.getLogger(finaladmin.class.getName()).log(Level.SEVERE, null, ex);
+        JOptionPane.showMessageDialog(this, "Error while updating rent status.", "Error", JOptionPane.ERROR_MESSAGE);
+    }  
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+        // TODO add your handling code here:
+        Client obj = new Client();
+        obj.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_jButton8ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1126,6 +1453,7 @@ public void Load_reservations() {
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton8;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1141,6 +1469,9 @@ public void Load_reservations() {
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
