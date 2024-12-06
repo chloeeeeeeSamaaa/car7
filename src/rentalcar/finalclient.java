@@ -919,7 +919,10 @@ Connection con;
 
         // Refresh the reservation list
         Load_reservation();
-
+paymentmethod paymentFrame = new paymentmethod();
+        paymentFrame.setTotalAmount(totalAmount);  // Pass the total amount to the payment frame
+        paymentFrame.setVisible(true);
+        dispose();
         // Clear the fields after successful insertion
         txtname.setText("");
         txtaddress.setText("");
